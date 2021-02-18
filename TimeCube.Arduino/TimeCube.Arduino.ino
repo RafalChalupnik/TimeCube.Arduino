@@ -1,10 +1,17 @@
 #include <EEPROM.h>
 
 const int MAX_SIDE_COUNT = 25;
+const int INT_MAX_VALUE = 10000;
+
+int* currentPosition = new int[3];
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+
+  currentPosition[0] = 0;
+  currentPosition[1] = 0;
+  currentPosition[2] = 0;
 }
 
 void loop() {
@@ -47,7 +54,14 @@ void calibrate() {
       sides[configuredSides] = vector;
       configuredSides++;
   
-      Serial.println("Configured side.");
+      Serial.println("Configured side:");
+      Serial.print("X=");
+      Serial.print(vector[0]);
+      Serial.print("Y=");
+      Serial.print(vector[1]);
+      Serial.print("Z=");
+      Serial.print(vector[2]);
+      Serial.println();
     }
   }
 
@@ -62,8 +76,29 @@ void calibrate() {
 
 void track() {
   bool calibrated = getCalibrated();
-  Serial.println("Reading Calibrated from EEPROM:");
-  Serial.println(calibrated);
+  if (calibrated) {
+    int sidesCount = getSidesCount();
+    int** sideData = getSides(sidesCount);
+
+    int lowestDistance = INT_MAX_VALUE;
+    int closestSide = -1;
+
+    for (int i = 0; i < sidesCount; i++) {
+      int newDistance = pow(sideData[i][0] - currentPosition[0], 2) 
+        + pow(sideData[i][1] - currentPosition[1], 2) 
+        + pow(sideData[i][2] - currentPosition[2], 2);
+
+      if (newDistance < lowestDistance) {
+        lowestDistance = newDistance;
+        closestSide = i;
+      }
+    }
+
+    Serial.println("Closest side:");
+    Serial.println(closestSide);
+  } else {
+    Serial.println("The cube has not been calibrated.");
+  }
 }
 
 String readInput() {
@@ -119,6 +154,34 @@ void setCalibrated(bool calibrated) {
   } else {
     EEPROM.write(CALIBRATED_ADDRESS, 0);
   }
+}
+
+int getSidesCount() {
+  return EEPROM.read(SIDE_COUNT_ADDRESS);
+}
+
+int** getSides(int sideCount) {
+  int** output = new int*[sideCount];
+
+  for (int i = 0; i < sideCount; i++) {
+    int* vector = new int[3];
+    vector[0] = EEPROM.read(i * 6 + SIDE_COUNT_ADDRESS + 1);
+    vector[1] = EEPROM.read(i * 6 + SIDE_COUNT_ADDRESS + 3);
+    vector[2] = EEPROM.read(i * 6 + SIDE_COUNT_ADDRESS + 5);
+
+    output[i] = vector;
+
+    Serial.println("Read side:");
+    Serial.print("X=");
+    Serial.print(vector[0]);
+    Serial.print("Y=");
+    Serial.print(vector[1]);
+    Serial.print("Z=");
+    Serial.print(vector[2]);
+    Serial.println();
+  }
+
+  return output;
 }
 
 void setSides(int** sideData, int count) {
