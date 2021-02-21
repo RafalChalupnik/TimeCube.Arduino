@@ -20,6 +20,7 @@ int** _sidesData;
 int* _currentPosition;
 
 void setup() {
+  // TODO: Delete after switching to Bluetooth
   Serial.begin(9600);
 
   _calibrated = getCalibrated();
@@ -55,7 +56,7 @@ bool requestedCalibration() {
 }
 
 void calibrate() {
-  Serial.println(STARTED_CALIBRATION_MESSAGE);
+  sendMessage(STARTED_CALIBRATION_MESSAGE);
 
   bool finished = false;
   int** sides = new int*[MAX_SIDE_COUNT];
@@ -70,8 +71,8 @@ void calibrate() {
       int* vector = parseVector(input);
       sides[sidesCount] = vector;
       sidesCount++;
-  
-      Serial.println(OK_MESSAGE);
+
+      sendMessage(OK_MESSAGE);
       log(vector);
     }
   }
@@ -84,12 +85,12 @@ void calibrate() {
   delete _sidesData;
   _sidesData = sides;
   _sidesCount = sidesCount;
-  Serial.println(FINISHED_CALIBRATION_MESSAGE);
+  sendMessage(FINISHED_CALIBRATION_MESSAGE);
 }
 
 void track() {
   if (_calibrated == false) {
-    Serial.println(NOT_CALIBRATED_MESSAGE);
+    sendMessage(NOT_CALIBRATED_MESSAGE);
     return;
   }
 
@@ -109,8 +110,7 @@ void track() {
     }
   }
 
-  Serial.print(CLOSEST_SIDE_MESSAGE);
-  Serial.println(closestSide);
+  sendMessage(CLOSEST_SIDE_MESSAGE, closestSide);
 }
 
 void readCurrentPosition() {
@@ -242,6 +242,18 @@ String readInput() {
   }
 
   return Serial.readString();;
+}
+
+void sendMessage(String message) {
+  // TODO: Switch to Bluetooth
+  Serial.println(message);
+}
+
+void sendMessage(String message, int parameter) {
+  // TODO: Switch to Bluetooth
+  Serial.print(message);
+  Serial.print(parameter);
+  Serial.println();
 }
 
 String* splitString(String value, String delimiter) {
