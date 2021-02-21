@@ -222,10 +222,12 @@ void log(int* vector) {
 }
 
 int* parseVector(String string) {
-  String* elements = splitString(string, ' ');
+  String* elements = splitString(string, " ");
   int* output = new int[3];
 
   for (int i = 0; i < 3; i++) {
+    log("Parsing:");
+    log(elements[i]);
     output[i] = elements[i].toInt();
   }
 
@@ -238,21 +240,26 @@ String readInput() {
     delay(100);
   }
 
-  return Serial.readString();
+  return Serial.readString();;
 }
 
-String* splitString(String value, char delimiter) {
+String* splitString(String value, String delimiter) {
   String* output = new String[3];
-  int valueLength = value.length();
+  String remainingString = value;
   int elements = 0;
-  int currentIndex = 0;
+  int delimiterIndex;
 
-  for (int i = 0; i < valueLength; i++) {
-    if (value[i] == delimiter) {
-      output[elements] = value.substring(currentIndex, i);
-      elements++;
-      currentIndex = i;
+  while (remainingString != "") {
+    delimiterIndex = remainingString.indexOf(delimiter);
+    if (delimiterIndex != -1) {
+      output[elements] = remainingString.substring(0, delimiterIndex);
+      remainingString = remainingString.substring(delimiterIndex + 1);
+    } else {
+      output[elements] = remainingString;
+      remainingString = "";
     }
+
+    elements++;
   }
 
   return output;
