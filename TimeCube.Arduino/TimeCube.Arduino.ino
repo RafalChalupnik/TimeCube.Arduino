@@ -8,7 +8,10 @@ const String CALIBRATE_COMMAND = "calibrate";
 const String FINISH_COMMAND = "finish";
 
 const String CLOSEST_SIDE_MESSAGE = "ClosestSide: ";
+const String FINISHED_CALIBRATION_MESSAGE = "FinishedCalibration";
+const String OK_MESSAGE = "OK";
 const String NOT_CALIBRATED_MESSAGE = "NotCalibrated";
+const String STARTED_CALIBRATION_MESSAGE = "StartedCalibration";
 
 bool _calibrated;
 
@@ -52,7 +55,7 @@ bool requestedCalibration() {
 }
 
 void calibrate() {
-  log("Entered calibration mode.");
+  Serial.println(STARTED_CALIBRATION_MESSAGE);
 
   bool finished = false;
   int** sides = new int*[MAX_SIDE_COUNT];
@@ -68,7 +71,7 @@ void calibrate() {
       sides[sidesCount] = vector;
       sidesCount++;
   
-      log("Configured side:");
+      Serial.println(OK_MESSAGE);
       log(vector);
     }
   }
@@ -81,7 +84,7 @@ void calibrate() {
   delete _sidesData;
   _sidesData = sides;
   _sidesCount = sidesCount;
-  Serial.println("Calibration finished.");
+  Serial.println(FINISHED_CALIBRATION_MESSAGE);
 }
 
 void track() {
@@ -226,8 +229,6 @@ int* parseVector(String string) {
   int* output = new int[3];
 
   for (int i = 0; i < 3; i++) {
-    log("Parsing:");
-    log(elements[i]);
     output[i] = elements[i].toInt();
   }
 
