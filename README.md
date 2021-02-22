@@ -1,3 +1,17 @@
+# Circuit
+
+![circuit](circuit.png)
+
+### Modules:
+
+- Arduino Uno
+- MPU-6050 accelerometer + gyroscope
+- HM-10 Bluetooth LE
+
+[Circuito model]: https://www.circuito.io/app?components=514,11022,11028,395589	"Circuito model"
+
+
+
 # Memory layout
 
 
