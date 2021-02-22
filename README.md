@@ -13,9 +13,10 @@
 | ---- | ---- | ---- |
 | C | byte |Determines whether the device is calibrated.|
 | S | byte |Determines the count of the sides.|
-| X | short |Determines the X coordinate of the side.|
-| Y | short |Determines the Y coordinate of the side.|
-| Z | short |Determines the Z coordinate of the side.|
+| X | int |Determines the X coordinate of the side.|
+| Y | int |Determines the Y coordinate of the side.|
+| Z | int |Determines the Z coordinate of the side.|
 
-Taking the Arduino Nano EEPROM memory size into account (**512 bytes**), the maximum count of sides available for configuration is **85**. As it is more than enough, the maximum count will be set to **25**.
+Taking the Arduino Nano EEPROM memory size into account (**512 bytes**), the maximum count of sides available for configuration is **85**. As it is more than enough, the maximum count is set to **25**.
 
+Note that **int** type on Arduino allocates 2 bytes of memory.
