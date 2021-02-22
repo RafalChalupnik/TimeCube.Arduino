@@ -18,6 +18,7 @@ bool _calibrated;
 int _sidesCount;
 int** _sidesData;
 int* _currentPosition;
+int _currentSide;
 
 void setup() {
   // TODO: Delete after switching to Bluetooth
@@ -31,9 +32,11 @@ void setup() {
   }
   
   _currentPosition = new int[3];
-  _currentPosition[0] = 0;
-  _currentPosition[1] = 0;
-  _currentPosition[2] = 0;
+  _currentPosition[0] = 1;
+  _currentPosition[1] = 1;
+  _currentPosition[2] = 1;
+
+  _currentSide = -1;
 }
 
 void loop() {
@@ -110,7 +113,10 @@ void track() {
     }
   }
 
-  sendMessage(CLOSEST_SIDE_MESSAGE, closestSide);
+  if (closestSide != _currentSide) {
+    sendMessage(CLOSEST_SIDE_MESSAGE, closestSide);
+    _currentSide = closestSide;
+  }
 }
 
 void readCurrentPosition() {
